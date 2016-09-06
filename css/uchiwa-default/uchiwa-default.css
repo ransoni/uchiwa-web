@@ -89,7 +89,7 @@ hr {
   padding: 0 !important; }
 
 a {
-  color: #5F97FB; }
+  color: #0019af; }
 
 [ng-click] {
   cursor: pointer; }
@@ -229,7 +229,7 @@ pre.hljs .hljs-string {
 
 .btn-default {
   color: #ffffff;
-  background-color: #5F97FB; }
+  background-color: #0019af; }
 
 .btn-default:hover {
   color: #ffffff;
@@ -257,7 +257,7 @@ pre.hljs .hljs-string {
 
 .btn-collection, .btn-collection:hover, .btn-collection:focus, .btn-collection:visited {
   color: #ffffff;
-  background-color: #5F97FB;
+  background-color: #0019af;
   border: 0px; }
 
 .container-fluid {
@@ -403,7 +403,7 @@ pre.hljs .hljs-string {
   border-left: 5px solid transparent; }
 
 .dropdown-menu > .selected > a {
-  border-left: 5px solid #5F97FB; }
+  border-left: 5px solid #0019af; }
 
 .dropdown-menu > li > a > i.fa {
   padding-right: 7px; }
@@ -543,7 +543,7 @@ pre.hljs .hljs-string {
   font-weight: 700;
   font-size: 12px;
   text-transform: uppercase;
-  color: #5F97FB; }
+  color: #0019af; }
 
 /* Colors */
 /* Body, Sections and Headers */
@@ -592,7 +592,7 @@ li.timestamp a {
   font-weight: 700; }
 
 li.timestamp a:hover {
-  color: #5F97FB; }
+  color: #0019af; }
 
 li.timestamp .relative-timestamp {
   color: #4D4D4D;
@@ -743,7 +743,7 @@ li.timestamp .relative-timestamp {
 .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus, li > a.active {
   color: #4D4D4D;
   background-color: inherit;
-  border-bottom: 3px solid #5F97FB;
+  border-bottom: 3px solid #0019af;
   margin-bottom: -3px;
   z-index: 10; }
 
@@ -1010,8 +1010,8 @@ li.timestamp .relative-timestamp {
   background-color: #2C394A; }
 
 .nav > .logo {
-  background-color: #5F97FB;
-  border-left: 3px #5F97FB;
+  background-color: #0019af;
+  border-left: 3px #0019af;
   display: block;
   padding-left: 16px;
   padding-right: 15px;
@@ -1103,10 +1103,10 @@ li.timestamp .relative-timestamp {
   color: #ffffff; }
 
 .sidebar .tooltip .tooltip-inner {
-  background-color: #5F97FB; }
+  background-color: #0019af; }
 
 .tooltip.right .tooltip-arrow {
-  border-right: 5px solid #5F97FB; }
+  border-right: 5px solid #0019af; }
 
 /* Colors */
 /* Body, Sections and Headers */

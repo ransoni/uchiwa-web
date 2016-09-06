@@ -1,0 +1,375 @@
+<ng-include src="partialsPath + '/navbar.html'"></ng-include>
+<ng-include src="partialsPath + '/sidebar.html'"></ng-include>
+<div class="container-fluid tenant">
+<!--  <ng-include src="partialsPath + '/page-header.html'"></ng-include>-->
+  <div class="row-fluid"> <!-- TENANT SERVER INFO -->
+    <div class="col-lg-10">
+<!--      <div class="row-fluid">-->
+<!--      <div class="col-lg-10">-->
+        <div class="panel panel-default" ng-repeat="datacenter in dc | orderBy:'name'">
+          <div class="panel-heading">
+            {{datacenter.name}}
+          </div>
+          <div class="panel-body">
+            <div class="row pull-center">
+              <div class="col-md-4">
+                <div class="servertitle center">Sensu Version</div>
+                <div class="number center">{{datacenter.version}}</div>
+              </div>
+              <div class="col-md-4">
+                <div class="servertitle center">Connected to transport</div>
+                <div class="number center">{{datacenter.transport}}</div>
+              </div>
+              <div class="col-md-3">
+                <div class="servertitle center">Connected to redis</div>
+                <div class="number center">{{datacenter.redis}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+<!--      </div>-->
+<!--    </div>-->
+    </div>
+  </div> <!-- /TENANT SERVER INFO -->
+  <div class="row-fluid"> <!-- NEW TENANT PANEL -->
+	<div class="col-lg-4"> <!-- USER INFO PANEL -->
+		<div class="panel panel-default user-info">
+		  <div class="panel-heading"> <!-- USER INFO HEADING -->
+			<div class="icon">
+				<span class="pull-right ng-scope">
+					<i class="fa fa-user-plus" ng-class="addUserIcon ? 'titleicon-pressed' : 'titleicon-normal'" ng-if="userInfo.isAdmin" ng-click="addNewUser()" tooltip="Add new user" tooltip-trigger="" tooltip-placement="top">
+					</i>
+					<i class="fa fa-pencil " ng-class="editUserIcon ? 'titleicon-pressed' : 'titleicon-normal'" ng-click="editUser()" tooltip="Edit your details" tooltip-trigger="" tooltip-placement="top">
+					</i>
+					<i class="fa fa-key ng-scope" ng-class="passwdUserIcon ? 'titleicon-pressed' : 'titleicon-normal'" ng-click="changePasswd()" tooltip="Change Password" tooltip-trigger="" tooltip-placement="top">
+					</i>
+				</span>
+			</div>
+         <div class="title">
+            User
+         </div>
+		  </div> <!-- /USER INFO HEADING -->
+		  <div class="panel-body"> <!-- USER INFO PANEL -->
+		  	<div class="details" ng-hide="changePw || editUsr || addUser">
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="user"><i class="fa fa-user"></i> {{ userInfo.givenName }} {{ userInfo.sn }}</div>
+						<div class="passwdExpiration">Password expires in: {{ userInfo.krbPasswordExpiration | ymdDate }}</div>
+					</div>
+				</div>
+			</div>
+			<div class="attributes" ng-hide="changePw || editUsr || addUser"> <!-- To show logged in user details -->
+				<div class="row"> <!-- email -->
+					<div class="col-sm-2">
+						<div class="key pull-left">Email:</div>
+					</div>
+					<div class="col-sm-8">
+						<div class="value pull-left" contenteditable="true" ng-model="userInfo.mail">{{ userInfo.mail }}</div>
+					</div>
+				</div> <!-- /email -->
+				<div class="row"> <!-- mobile -->
+					<div class="col-sm-2">
+						<div class="key pull-left">Mobile:</div>
+					</div>
+					<div class="col-sm-8">
+						<div class="value pull-left">{{ userInfo.mobile | mobile }}</div>
+					</div>
+				</div> <!-- /mobile -->
+				<div class="row"> <!-- company -->
+					<div class="col-sm-2">
+						<div class="key pull-left">Company:</div>
+					</div>
+					<div class="col-sm-8">
+						<div class="value pull-left">{{ userInfo.ou }}</div>
+					</div>
+				</div> <!-- /company -->
+				<div class="row"> <!-- street -->
+					<div class="col-sm-2">
+						<div class="key pull-left">Street:</div>
+					</div>
+					<div class="col-sm-8">
+						<div class="value pull-left">{{ userInfo.street }}</div>
+					</div>
+				</div> <!-- /street -->
+				<div class="row"> <!-- location -->
+					<div class="col-sm-2">
+						<div class="key pull-left">Location:</div>
+					</div>
+					<div class="col-sm-8">
+						<div class="value pull-left">{{ userInfo.postalCode }} {{ userInfo.l }}</div>
+					</div>
+				</div> <!-- /locatio -->
+				<div class="row"> <!-- admin -->
+					<div class="col-sm-2">
+						<div class="key pull-left">Admin:</div>
+					</div>
+					<div class="col-sm-8">
+						<div class="value pull-left">{{ userInfo.isAdmin }}</div>
+					</div>
+				</div> <!-- /admin -->
+			</div> <!-- User details panel -->
+			<div class="row password" ng-show="changePw"> <!-- Change password -->
+							  <div class="col-md-12">
+								 <div class="panel-body">
+									<form ng-submit="postPasswd()">
+										Old password:</br> <input class="input" type="text" name="password" ng-model="userPasswd.oldPassword" required><br />
+										New password:</br> <input class="input" type="password" name="password1" ng-model="userPasswd.password1" required><br />
+										New password:</br> <input class="input" type="password" name="password2" ng-model="userPasswd.password2" required>
+										<input type="submit" ng-disabled="userPasswd.password1 != userPasswd.password2" value="send" />
+										<span ng-show="userPasswd.password1 != userPasswd.password2">New passwords do not match.</span>
+									</form>
+								 </div>
+							  </div>
+							</div> <!-- /Change password -->
+	  		<div class="row edituser" ng-show="editUsr"> <!-- Edit user -->
+							  <div class="col-md-12">
+								 <div class="panel-body">
+									 <form ng-submit="postUserForm()">
+										 Name:</br> <input class="input span1" type="text" name="givenName" ng-model="postUser.givenName" required>
+                               <input class="input" type="text" name="sn" ng-model="postUser.sn" required><br/>
+										 Email:</br> <input class="input"  type="text" name="mail" ng-model="postUser.mail" required><br/>
+										 Tel:</br> <input class="input"  type="text" name="mobile" ng-model="postUser.mobile" required><br/>
+
+										 <input type="button" ng-click="editUserReset()" value="Reset" />
+										 <input type="submit" value="Send" />
+									 </form>
+								 </div>
+							  </div>
+							</div> <!-- /Edit user -->
+	  		<div class="row edituser" ng-show="addUser"> <!-- Add user -->
+							  <div class="col-md-12">
+								 <div class="panel-body">
+									 <form ng-submit="postNewUserForm()">
+										 Name:</br> <input class="input span1" type="text" name="givenName" placeholder="Firstname" ng-model="newUser.givenName" required>
+                               <input class="input" type="text" name="sn" placeholder="Lastname" ng-model="newUser.sn" required><br/>
+										 Email:</br> <input class="input"  type="text" name="mail" placeholder="email" ng-model="newUser.mail" required><br/>
+										 Tel:</br> <input class="input"  type="text" name="mobile" placeholder="mobile number" ng-model="newUser.mobile" required><br/>
+										 <input type="submit" value="send" /><br/>
+									 </form>
+								 </div>
+							  </div>
+							</div> <!-- /Add user -->
+		  </div> <!-- /USER INFO PANEL -->
+      </div>
+	</div> <!-- /USER INFO PANEL -->
+	<div class="col-lg-6"> <!-- /TENANT CONFIG PANEL -->
+		<div class="panel panel-default tenant-info">
+			<div class="panel-heading">
+				<div class="icon">
+				<span class="pull-right ng-scope">
+					<i class="fa fa-download ng-scope" ng-click="downloadZip()" tooltip="Download config" tooltip-trigger="" tooltip-placement="top"></i>
+				</span>
+			</div>
+				<div class="title">
+					Tenant info
+				</div>
+			</div>
+			<div class="panel-body">
+				<div class="details">
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="user" tooltip="Use these details to configure the sensu clients RabbitMQ connection." tooltip-trigger="" tooltip-placement="top"><i class="fa fa-exchange"></i> Message queue configuration</div>
+					</div>
+				</div>
+			</div>
+			<div class="attributes"> <!-- Tenant MQ details panel -->
+				<div ng-repeat="(key, value) in tenant">
+<!--              <span ng-show="sanitizeObject('tenant', key)">-->
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="key pull-left">{{key}}:</div>
+                  </div>
+                  <div class="col-sm-8">
+                    <div class="value pull-left" ng-bind-html="value"></div>
+                  </div>
+                </div>
+<!--              </span>-->
+            </div>
+			</div> <!-- Tenant MQ details panel -->
+			</div>
+		</div>
+	</div> <!-- /TENANT CONFIG PANEL -->
+</div> <!-- /NEW TENANT PANEL -->
+  <div class="row-fluid" ng-if="userInfo.isAdmin"> <!-- NEW USERS PANEL -->
+	<div class="col-lg-10"> <!-- USERS LIST PANEL -->
+		<div class="panel panel-default users-list">
+			<div class="panel-heading">
+				<div class="icon">
+				<span class="pull-left ng-scope">
+					<i class="fa fa-users ng-scope" ng-click="" tooltip="Download config" tooltip-trigger="" tooltip-placement="top"></i>
+				</span>
+			</div>
+				<div class="title">
+					Users list
+				</div>
+			</div>
+			<div class="panel-body">
+<!--
+				<div class="details">
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="user" tooltip="Use these details to configure the sensu clients RabbitMQ connection." tooltip-trigger="" tooltip-placement="top"><i class="fa fa-exchange"></i> Message queue configuration</div>
+					</div>
+				</div>
+			</div>
+-->
+			<div class="attributes"> <!-- Tenant MQ details panel -->
+				<!-- <div ng-repeat="user in users"> -->
+                <div class="row">
+                  <div class="col-sm-2 pull-left">
+                    <div class="key">User:</div>
+							<div class="value" ng-repeat="user in users"> {{ user.displayName }}</div>
+                  </div>
+<!--
+                  <div class="col-sm-4 pull-left">
+                    <div class="value" ng-bind-html="user.displayName"></div>
+                  </div>
+-->
+						<div class="col-sm-2 pull-left">
+                    <div class="key">Username:</div>
+<!--							<div class="value" ng-bind-html="user.uid"></div>-->
+							<div class="value" ng-repeat="user in users"> {{ user.uid }}</div>
+                  </div>
+
+						 <div class="col-sm-2 pull-left">
+                    <div class="key">Mobile:</div>
+<!--							<div class="value" ng-bind-html="user.uid"></div>-->
+							<div class="value" ng-repeat="user in users"> {{ user.mobile }}</div>
+                  </div>
+						 <div class="col-sm-2 pull-left">
+                    <div class="key">Mail:</div>
+<!--							<div class="value" ng-bind-html="user.uid"></div>-->
+							<div class="value" ng-repeat="user in users"> {{ user.mail }}</div>
+                  </div>
+<!--
+                  <div class="col-sm-4 pull-left">
+                    <div class="value" ng-bind-html="user.uid"></div>
+                  </div>
+-->
+                </div>
+            <!-- </div> --> <!-- /ng-repeat -->
+			</div> <!-- Tenant MQ details panel -->
+			</div>
+		</div>
+	</div> <!-- /USERS LIST PANEL -->
+</div> <!-- /NEW USERS PANEL -->
+</div>
+  <div class="row-fluid" ng-show="false">  OLD 'GET RID OFF' PANEL
+    <div class="col-lg-12">
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Tenant
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="title center">Tenant Info
+                    <p><button ng-click="tenantRefresh()">Refresh</button></p>
+                </div>
+                <div>
+                    <h3>User info</h3>
+                    <p>
+                        <button ng-hide="editUsr" ng-click="editUser()">Edit</button>
+                        <button ng-show="editUsr" ng-click="editUser()">Cancel</button>
+                        <button ng-click="changePasswd()">Change password</button>
+                        <button ng-click="addNewUser()">Add user</button>
+                    </p>
+                    <div ng-show="changePw">
+                        <p>
+                        <form ng-submit="postPasswd()">
+                            Old password: <input type="text" name="password" ng-model="userPasswd.oldPassword" required><br />
+                            New password: <input type="text" name="password1" ng-model="userPasswd.password1" required><br />
+                            New password: <input type="text" name="password2" ng-model="userPasswd.password2" required>
+                            <input type="submit" ng-disabled="userPasswd.password1 != userPasswd.password2" value="send" />
+                            <span ng-show="userPasswd.password1 != userPasswd.password2">New passwords do not match.</span>
+                        </form>
+                        </p>
+                    </div>
+                    <div ng-hide="editUsr || changePw">
+                        <p ng-click="editUsr()">
+                        Name: {{ userInfo.givenName }} {{ userInfo.sn }}<br/>
+                        Email: {{ userInfo.mail }} <br/>
+                        Tel: +{{ userInfo.tel }}<br/>
+                        Org: {{ userInfo.ou }}<br/>
+                        Address: {{ userInfo.street }}<br/>
+                        ZIP: {{ userInfo.postalCode }}<br/>
+                        City: {{ userInfo.l }}<br/>
+                        <br/>
+                        Last login: {{ userInfo.lastLogin }}
+                        </p>
+                    </div>
+                    <div ng-show="editUsr">
+                        <p>
+                        <form ng-submit="postUserForm()">
+                            <label for="givenName">Name</label>
+                            <input class="span1" type="text" name="givenName" ng-model="postUser.givenName" required>
+                                    <input type="text" name="sn" ng-model="postUser.sn" required><br/>
+                            Email: <input type="text" name="mail" ng-model="postUser.mail" required><br/>
+                            Tel: <input type="text" name="mobile" ng-model="postUser.mobile" required><br/>
+                            Org: <input type="text" name="ou" ng-model="postUser.ou" required><br/>
+                            Address: <input type="text" name="street" ng-model="postUser.street"><br/>
+                            ZIP: <input type="text" name="postalCode" ng-model="postUser.postalCode"><br/>
+                            City: <input type="text" name="l" ng-model="postUser.l"><br/>
+                            <input type="submit" value="send" />
+                            <br/>
+                        </form>
+                        </p>
+                    </div>
+                    <div ng-show="addUser">
+                        <p>
+                        <form ng-submit="postNewUserForm()">
+                            <label for="givenName">Name</label>
+                            <input class="span1" type="text" name="givenName" ng-model="newUser.givenName" required>
+                                    <input type="text" name="sn" ng-model="newUser.sn" required><br/>
+                            Email: <input type="text" name="mail" ng-model="newUser.mail" required><br/>
+                            Tel: <input type="text" name="mobile" ng-model="newUser.mobile" required><br/>
+<!--                            Org: <input type="text" name="ou" ng-model="newUser.ou" required><br/>-->
+<!--
+                            Address: <input type="text" name="street" ng-model="newUser.street"><br/>
+                            ZIP: <input type="text" name="newCode" ng-model="postUser.postalCode"><br/>
+                            City: <input type="text" name="l" ng-model="newUser.city"><br/>
+-->
+                            <input type="submit" value="send" />
+                            <br/>
+                        </form>
+                        </p>
+                    </div>
+                <div>
+                    <h3>Tenant info</h3>
+                    <p>
+                        <button ng-hide="editUsr" ng-click="editUser()">Edit</button>
+                        <button ng-show="editUsr" ng-click="editUser()">Cancel</button>
+                        <button ng-click="changePasswd()">Change password</button>
+                    </p>
+                    Name: {{ tenant.name }}<br/>
+                    RabbitMQ info: <br />
+                    Vhost address: {{ tenant.vhost_address }} <br />
+                    Vhost port: {{ tenant.vhost_port }} <br/>
+                    Vhost name: {{ tenant.vhost_name }}<br/>
+                    Vhost user: {{ tenant.vhost_user }}<br/>
+                    Vhost pass: {{ tenant.vhost_pass }}<br/>
+                    Vhost cert: {{ tenant.vhost_cert }}<br/>
+						  Vhost cert: Toimiiko?<br/>
+                </div>
+
+
+<!--                    <p ng-bind-html="keksi | richOutput"></p>-->
+                    <p ng-bind-html="userInfo | richOutput"></p>
+				 		  <p ng-bind-html="tenant | richOutput"></p>
+
+                  </div>
+<!--
+                <div class="number center">{{uchiwa.version}}</div>
+                <hr>
+                <div class="title center">Config</div>
+                <div ng-bind-html="tenant | richOutput"></div>
+-->
+              </div>
+            </div>
+          </div>
+        </div>
+<!--      </div>-->
+<!--    </div>-->
+    </div>
+  </div> <!-- /OLD 'GET RID OFF' PANEL -->

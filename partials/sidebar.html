@@ -126,7 +126,7 @@
             </div>
           </div>
         </li>
-        <li id="aggregates" class="show-on-hover" ng-class="getClass('/aggregates')">
+<!--        <li id="aggregates" class="show-on-hover" ng-class="getClass('/aggregates')">
           <a ng-href="#aggregates" class="dropdown-toggle" data-toggle="dropdown">
             <span class="small-nav">
               <i class="fa fa-folder"></i>
@@ -150,7 +150,7 @@
               </div>
             </div>
           </div>
-        </li>
+        </li>-->
         <li id="datacenters" class="show-on-hover" ng-class="getClass('/datacenter')">
           <a ng-href="#datacenters" class="dropdown-toggle" data-toggle="dropdown">
             <span class="small-nav">
@@ -199,6 +199,13 @@
               </div>
             </div>
           </div>
+        </li>
+		  <li id="tenant" ng-class="getClass('/tenant')">
+          <a ng-href="#tenant">
+              <span class="small-nav" tooltip-placement="right" tooltip-trigger tooltip="Tenant">
+                <i class="fa fa-building"></i>
+              </span>
+          </a>
         </li>
         <li ng-if="enterprise && config.Uchiwa.Auth === 'sql' && user.isAdmin()" ng-class="getClass('/users')" >
           <a ng-href="#users">

@@ -754,3 +754,283 @@ controllerModule.controller('StashesController', ['$filter', 'filterService', 'h
     };
   }
 ]);
+
+/**
+* Tenant
+*/
+controllerModule.controller('TenantController', ['backendService', '$scope', '$cookieStore', '$http', 'notification', 'titleFactory', 'version',
+  function (backendService, $scope, $cookieStore, $http, notification, titleFactory, version) {
+    var userInfo = {};
+    $scope.postUser = {};
+    $scope.userPasswd = {};
+    $scope.editUsr = false;
+    $scope.changePw = false;
+    $scope.addUser = false;
+	 $scope.editUserIcon = false;
+	 $scope.addUserIcon = false;
+	 $scope.passwdUserIcon = false;
+    $scope.pageHeaderText = 'Tenant';
+    titleFactory.set($scope.pageHeaderText);
+
+    $scope.keksi = $cookieStore.get('uchiwa_auth');
+
+    $scope.editUser = function() {
+        $scope.editUsr = !$scope.editUsr;
+		  $scope.editUserIcon = !$scope.editUserIcon;
+
+		  if ($scope.changePw == true) {
+			  $scope.changePw = !$scope.changePw;
+			  $scope.passwdUserIcon = !$scope.passwdUserIcon;
+		  } else if ($scope.addUser == true) {
+			  $scope.addUser = !$scope.addUser;
+			  $scope.addUserIcon = !$scope.addUserIcon;
+		  };
+    }
+
+	 $scope.editUserReset = function() {
+		 $scope.postUser = angular.copy($scope.userInfo);
+	 };
+
+    $scope.changePasswd = function() {
+        $scope.changePw = !$scope.changePw;
+		  $scope.passwdUserIcon = !$scope.passwdUserIcon;
+
+		  if ($scope.editUsr == true) {
+			  $scope.editUsr = !$scope.editUsr;
+			  $scope.editUserIcon = !$scope.editUserIcon;
+		  } else if ($scope.addUser == true) {
+			  $scope.addUser = !$scope.addUser;
+			  $scope.addUserIcon = !$scope.addUserIcon;
+		  };
+//		  console.log($scope.userPasswd);
+    }
+
+    $scope.addNewUser = function() {
+       $scope.addUser = !$scope.addUser;
+		 $scope.addUserIcon = !$scope.addUserIcon;
+
+		 if ($scope.editUsr == true) {
+			  $scope.editUsr = !$scope.editUsr;
+			  $scope.editUserIcon = !$scope.editUserIcon;
+		 } else if ($scope.changePw == true) {
+			  $scope.changePw = !$scope.changePw;
+			  $scope.passwdUserIcon = !$scope.passwdUserIcon;
+		 };
+    }
+
+// PASSWORD CHANGE
+    $scope.postPasswd = function() {
+        var self = this;
+        var data = {userName: $scope.userInfo.uid, oldPassword: $scope.userPasswd.oldPassword, newPassword: $scope.userPasswd.password1};
+        console.log(data);
+        console.log($scope.userPasswd);
+
+        this.changePwd = function(payload) {
+            return $http.post('post_passwd', payload);
+        };
+
+        this.changePwd(data)
+        .success(function (data, status) {
+            console.log("Post success!", status, data.error);
+			   notification('success', '' + data.error.split(":")[1]);
+//            if (data.error != null) {
+//                //err = data.error.split(":");
+//                notification('error', 'There was an error. ' + data.error.split(":")[1]);
+//            };
+        })
+        .error(function (data, error) {
+            console.log('Post error:' + error);
+            notification('error', 'There was an error changing the password');
+        });
+
+/*        $http({
+//            method:'POST',
+//            url:'post_passwd',
+//            data: $scope.userPasswd.password1
+//        }).success(function(data, status, headers, config) {
+//            $scope.passwordChanged = "OK";
+//            console.log("Password changed.", $scope.passwordChanged, status);
+//        });
+*/
+        $scope.changePasswd();
+    }
+
+// ADD NEW USER
+    $scope.postNewUserForm = function() {
+        var self = this;
+        var data = {givenName: $scope.newUser.givenName, sn: $scope.newUser.sn, mail: $scope.newUser.mail, mobile: $scope.newUser.mobile, ou: $scope.userInfo.ou};
+        /*console.log(data);
+        console.log($scope.newUser.givenName, $scope.newUser.sn, $scope.newUser.mail, $scope.newUser.mobile, $scope.newUser.ou);*/
+
+        this.newUser = function(payload) {
+            return $http.post('post_adduser', payload);
+        };
+
+        this.newUser(data)
+        .success(function (data, status) {
+//            console.log("Post success!", status, data.error);
+//            if (data.error != null) {
+            if (data.status == '1') {
+                notification('success', data.error);
+            } else if (data.status == '0') {
+                notification('error', data.error);
+            };
+        })
+        .error(function (data, error) {
+            console.log('Post error:' + error);
+            notification('error', 'There was an error adding a user');
+        });
+
+        $scope.addNewUser();
+    }
+
+    $scope.sendForm = function() {
+        console.log('testing form...');
+        console.log($scope.testText01);
+    };
+
+// POST USER EDIT
+    $scope.postUserForm = function() {
+       var self = this;
+		 var data = {givenName: $scope.postUser.givenName, sn: $scope.postUser.sn, mail: $scope.postUser.mail, mobile: $scope.postUser.mobile, ou: $scope.userInfo.ou};
+		 console.log($scope.postUser);
+
+       this.editUserPost = function(payload) {
+			 return $http.post('post_user', payload);
+		 };
+
+		 this.editUserPost(data)
+		 .success(function (data, status) {
+			 if (data.status == '1') {
+				 notification('success', data.error);
+			 } else if (data.status == '0') {
+				 notification('error', data.error);
+			 };
+		 })
+		 .error(function (data, error) {
+			 notification('error', "There was an error editing your user account.");
+		 });
+
+//		 $http({
+//            method: 'POST',
+//            url: 'post_user',
+//            data: $scope.postUser,
+//            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+//        })
+
+		 $scope.editUser();
+		 $scope.userRefresh();
+    };
+
+// DOWNLOAD CUSTOMER ZIP
+//	 $scope.downloadZip = function() {
+//		 $http.get('get_zip')
+//        .success(function (data, status) {
+//          console.log("File downloaded")
+//			 console.log(data)
+//			 console.log(status)
+//        })
+//        .error(function () {
+//          console.log("Could not download the file!")
+//        });
+//	 };
+	  $scope.downloadZip = function() {
+        // Resetting headers to Accept */* is necessary to perform a simple cross-site request
+        // (see https://developer.mozilla.org/en-US/docs/HTTP/Access_control_CORS#Simple_requests)
+//        delete $http.defaults.headers.common['X-Requested-With'];
+        $http.get('get_zip', {
+          responseType: "arraybuffer"
+        }).
+        success(function(data) {
+          $scope.info =
+            "Read '" + $scope.URL + "' with " + data.byteLength + " bytes in a variable of type '" + typeof(data) + "'. The original file has " + $scope.ORIGINAL_SIZE + " bytes."
+
+// to download in IE >10 versions
+          // Try using msSaveBlob if supported
+          console.log("Trying saveBlob method ...");
+          var blob = new Blob([data], {
+            type: 'application/zip'
+          });
+          console.log(blob);
+//          if (navigator.msSaveBlob)
+//            navigator.msSaveBlob(blob, 'MonniWizard.zip');
+//          else {
+//            // Try using other saveBlob implementations, if available
+//            var saveBlob = navigator.webkitSaveBlob || navigator.mozSaveBlob || navigator.saveBlob;
+//            if (saveBlob === undefined) throw "Not supported";
+////            saveBlob(blob, filename);
+//				saveBlob(blob, filename);
+//          }
+			 window.saveAs = window.saveAs || window.webkitSaveAs || window.mozSaveAs || window.msSaveAs;
+			 window.saveAs(blob, 'client.zip')
+          console.log("saveBlob succeeded");
+
+        }).
+        error(function(data, status) {
+          $scope.info = "Request failed with status: " + status;
+        });
+      };
+
+//	  REFRESH FUNCTIONS
+    $scope.userRefresh = function() {
+		 $http.get('get_user')
+		 .success(function(data, status) {
+			  $scope.httpStatus = status;
+			  $scope.userInfo = data;
+
+	//        var lastLogin = $scope.userInfo.krbLastSuccessfulAuth;
+	//
+	//        lastLogin = lastLogin.slice(0,4) + "/" + lastLogin.slice(4,6) + "/" + lastLogin.slice(6,8) + " " + lastLogin.slice(8,10) + ":" + lastLogin.slice(10,12) + "UTC";
+	////        console.log("lastLogin:" + lastLogin);
+	//        $scope.userInfo.lastLogin = lastLogin;
+
+			  if ($scope.userInfo.employeeType == 'admin') {
+				  $scope.userInfo.isAdmin = true;
+				  $scope.usersRefresh();
+				  console.log($scope.userInfo);
+			  };
+
+			  $scope.postUser = angular.copy($scope.userInfo);
+		 })
+		 .error(function(error) {
+			  console.log('Error: ' + JSON.stringify(error));
+		 });
+	 };
+
+    //Last login
+    //var lastLogin = $scope.user[0].krbLastSuccessfulAuth;
+    //var year = lastLogin.splice(0,4);
+    //$scope.user.lastLogin = year;
+    console.log($scope.userInfo);
+
+	 $scope.usersRefresh = function() {
+        $http.get('get_users')
+        .success(function(data, status) {
+            $scope.httpStatus = status;
+            $scope.users = data;
+        })
+        .error(function(error) {
+            console.log('Error: ' + JSON.stringify(error));
+        });
+    };
+
+    $scope.tenantRefresh = function() {
+		 console.log("tenantRefresh")
+        $http.get('get_tenant')
+        .success(function(data, status) {
+            $scope.httpStatus = status;
+            $scope.tenant = data;
+			  console.log(data)
+        })
+        .error(function(error) {
+            console.log('Error: ' + JSON.stringify(error));
+        });
+    };
+    console.log("Toimiiko tää??")
+    $scope.userRefresh();
+	 $scope.tenantRefresh();
+	 $scope.usersRefresh();
+
+    $scope.uchiwa = { version: version.uchiwa };
+  }
+]);
