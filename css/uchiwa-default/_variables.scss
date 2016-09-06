@@ -3,8 +3,10 @@ $primary-color: #ffffff !default;
 $secondary-color: #2C394A !default;
 $tertiary-color: #000000 !default;
 $quaternary-color: #F0F1F5 !default;
-$quinary-color: #5F97FB !default;
+//$quinary-color: #5F97FB !default;
+$quinary-color: #0019af !default;
 $senary-color: #434344 !default;
+$octonary-color: #5F97FB !default;
 
 $critical-color: #EA5443 !default;
 $warning-color: #F9BA46 !default;
@@ -79,7 +81,8 @@ $sidebar-nav-border-left: 3px solid $secondary-color  !default;
 
 $sidebar-nav-hover-text-color: $primary-color !default;
 $sidebar-nav-hover-background-color: $secondary-color !default;
-$sidebar-nav-hover-border-left: 3px solid $quinary-color !default;
+$sidebar-nav-hover-border-left: 3px solid $octonary-color !default;
+//$sidebar-nav-hover-border-left: 3px solid $quinary-color !default;
 
 $sidebar-nav-selected-text-color: $primary-color !default;
 $sidebar-nav-selected-background-color: $secondary-color !default;
